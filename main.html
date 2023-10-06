@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors DApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 10px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.4/dist/ethers.min.js"></script>
+</head>
+<body>
+    <h1>Rock Paper Scissors DApp</h1>
+
+    <div>
+        <button onclick="register()">Register</button>
+    </div>
+
+    <div>
+        <label for="playerMove">Your Move:</label>
+        <select id="playerMove" disabled>
+            <option value="Rock">Rock</option>
+            <option value="Paper">Paper</option>
+            <option value="Scissors">Scissors</option>
+        </select>
+    </div>
+
+    <button onclick="play()">Play</button>
+    <button onclick="reveal()">Reveal</button>
+    <button onclick="getOutcome()">Get Outcome</button>
+
+    <div id="result"></div>
+
+    <script>
+        // Replace with the address of your deployed contract
+        const contractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
+
+        const contractAbi = [
+            0x461b0f1c830d7b5703cdb48381e9ac3ec69f19e25488f0befc7897a8b78bb0b3
+        ];
+
+        let contractInstance;
+        let account;
+
+        async function loadContract() {
+            // Connect to MetaMask and request user's permission
+            await ethereum.request({ method: 'eth_requestAccounts' });
+
+            // Load contract instance using ethers.js
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const signer = provider.getSigner();
+            contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+
+            // Get the account address
+            account = await signer.getAddress();
+            console.log('Account:', account);
+        }
+
+        async function loadContract() {
+            // Connect to MetaMask and request user's permission
+            await ethereum.request({ method: 'eth_requestAccounts' });
+
+            // Load contract instance using ethers.js
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const signer = provider.getSigner();
+            contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+
+            // Get the account address
+            account = await signer.getAddress();
+            console.log('Account:', account);
+        }
+
+        async function register() {
+            try {
+                console.log('Calling register function...');
+
+                // Call the register function on the smart contract
+                const tx = await contractInstance.register();
+
+                // Wait for the transaction to be mined
+                await tx.wait();
+
+                console.log('Registered successfully!');
+            } catch (error) {
+                console.error('Error registering:', error.message);
+            }
+        }
+
+        function play() {
+            // Your logic to capture player's move and call the play function on the smart contract
+            console.log('Player played:', document.getElementById('playerMove').value);
+        }
+
+        function reveal() {
+            // Your logic to capture the revealed move and call the reveal function on the smart contract
+            console.log('Revealed move:', document.getElementById('playerMove').value);
+        }
+
+        async function getOutcome() {
+            // Call the getOutcome function on the smart contract
+            try {
+                const outcome = await contractInstance.getOutcome();
+                console.log('Outcome:', outcome);
+                document.getElementById('result').innerText = `Outcome: ${outcome}`;
+            } catch (error) {
+                console.error('Error getting outcome:', error.message);
+            }
+        }
+
+        // Load the contract when the page is loaded
+        window.onload = async () => {
+            await loadContract();
+            document.getElementById('playerMove').disabled = false; // Enable the move selection after loading the contract
+        };
+    </script>
+</body>
+</html>
